@@ -11,7 +11,7 @@ class _LogoState extends State<Logo> with SingleTickerProviderStateMixin {
   late Animation _sizeAnimation;
   late Animation<double> _curve;
   late bool isFav = false;
-
+  late bool p=true;
   @override
   void initState() {
     super.initState();
