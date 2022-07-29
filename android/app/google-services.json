@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "845859856702",
+    "project_id": "ninja-turtle-ced59",
+    "storage_bucket": "ninja-turtle-ced59.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845859856702:android:79f45c937691743d5d4c6f",
+        "android_client_info": {
+          "package_name": "com.mohamad2.turtle_ninja"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "845859856702-u606kcogg8g4hiup7no8o8e3o68m44lg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDovYcI47owXWEfBvGL8YLhvIOPRS1OoRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "845859856702-u606kcogg8g4hiup7no8o8e3o68m44lg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
