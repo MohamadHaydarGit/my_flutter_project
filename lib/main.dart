@@ -16,6 +16,7 @@ import 'package:turtle_ninja/services/auth.dart';
 import 'package:turtle_ninja/services/boxes.dart';
 import 'package:turtle_ninja/services/localNotificationService.dart';
 import 'connection/connectionStatusSingleton.dart';
+import 'drawer/drawer.dart';
 import 'models/city.dart';
 import 'models/mission.dart';
 import 'models/myuser.dart';
