@@ -91,7 +91,7 @@ void main() async {
           initialRoute: '/',
           routes: {
             '/':(context) => Wrapper(),
-            '/home':(context) => NinjaCard(),
+           // '/home':(context) => NinjaCard(),
            // '/settings':(context) => Settings(),
             '/details':(context) => Details(docID: '',),
            // '/details/map':(context) => MapScreen(),

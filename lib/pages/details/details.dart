@@ -59,29 +59,39 @@ class _DetailsState extends State<Details> {
         difference.value = daysBetween(currentTime, foundMission.first.endDate);
         showAnimation.value=true;
         print(difference);
-        setState(() {
-          notFinished = true;
-        });
-      } else {
-        if(cancelled==false && clickedOnButton==true) {
+        notFinished = true;
+        if(this.mounted) {
+          setState(() {
 
-            await GetIt.I.get<DataBaseService>().missionEnd(
-                foundMission.first, chData);
-            setState(() { clickedOnButton=false;});
+          });
+        }
+      } else {
+
+        if(cancelled==false && foundMission.first.city_id != "DefaultLocation") {
+
+          await GetIt.I.get<DataBaseService>().missionEnd(
+              foundMission.first, chData);
 
         }
         if(cancelled == true){
-          setState(() {cancelled=false; });
+          cancelled=false;
+          if(this.mounted) {
+            setState(() {});
+          }
         }
-        setState(() {
-          notFinished = false;
-          difference.value = 0;
-          showAnimation.value=false;
-        });
+        notFinished = false;
+        difference.value = 0;
+        showAnimation.value=false;
+        if(this.mounted) {
+          setState(() {
+
+          });
+        }
         timer.cancel();
       }
     });
   }
+
 
   late StreamSubscription _connectionChangeStream;
 
@@ -344,7 +354,6 @@ class _DetailsState extends State<Details> {
 
   @override
   void dispose() {
-    timer.cancel();
     super.dispose();
   }
 

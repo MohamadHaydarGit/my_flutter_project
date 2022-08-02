@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:turtle_ninja/models/lastUpdate.dart';
+import 'package:turtle_ninja/pages/home/homePage.dart';
 import 'package:turtle_ninja/shared/loader.dart';
-import '../helpers/dialogHelper.dart';
-import '../models/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/mission.dart';
 import '../models/myuser.dart';
 import '../services/boxes.dart';
 import '../services/database.dart';
@@ -22,7 +21,6 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-
 
 Map settings={};
   Future<void> setPreferences() async {
@@ -62,55 +60,6 @@ Map settings={};
 
 
 
-
-    String? userSettingsString = prefs.getString('user_settings_key');
-    UserSettings userSettings = UserSettings.decode(userSettingsString!);
-
-      if (userSettings.option == 1) {
-        settings['selectedOption'] = Option.ONE;
-      }
-      else if (userSettings.option == 4) {
-        settings['selectedOption'] = Option.FOUR;
-      }
-      else if (userSettings.option == 6) {
-        settings['selectedOption'] = Option.SIX;
-      }
-      else {
-        settings['selectedOption'] = Option.ONE;
-      }
-
-      if (userSettings.shape == "circle") {
-        settings['selectedShape'] = Shape.CIRCLE;
-      }
-      else if (userSettings.shape == "square") {
-        settings['selectedShape'] = Shape.SQUARE;
-      }
-
-      else {
-        settings['selectedShape'] = Shape.CIRCLE;
-      }
-      if (userSettings.volume == null) {
-        settings['selectedVolume'] = 1;
-      }
-      else {
-        settings['selectedVolume'] = userSettings.volume;
-      }
-      if(userSettings.sort == 'order') {
-        settings['sort'] = Sort.ORDER;
-      }
-      else if (userSettings.sort == 'alphabetical'){
-        settings['sort'] = Sort.ALPHABETICAL;
-      }
-      else if (userSettings.sort == 'cities'){
-        settings['sort'] = Sort.CITIES;
-      }
-      else if (userSettings.sort == 'favorites'){
-        settings['sort'] = Sort.FAVORITES;
-      }
-      else{
-        settings['sort'] = Sort.ORDER;
-      }
-
       //final String? charactersString = await prefs.getString('characters_list_key');
 
       // final List<CharacterData> charactersList = CharacterData.decode(charactersString!);
@@ -120,9 +69,36 @@ Map settings={};
 
       //print("Settings :"+settings['characters']);
 
-      Navigator.pushReplacementNamed(context, '/home', arguments: settings);
+    List<Mission> missionsList = Boxes.getMissions().values.toList().cast<Mission>();
+    DateTime currentTime = DateTime.now();
+
+    missionsList.forEach((mission) async {
+      if(currentTime.isAfter(mission.endDate) && mission.city_id != 'DefaultLocation'){
+        await GetIt.I.get<DataBaseService>().missionEnd(
+            mission, Boxes.getCharacterData().get(mission.character_id)!);
+      }
+      else if(currentTime.isBefore(mission.endDate)){
+        Future.delayed(Duration(seconds: daysBetween(currentTime,mission.endDate)),() async {
+          await GetIt.I.get<DataBaseService>().missionEnd(
+              mission, Boxes.getCharacterData().get(mission.character_id)!);
+
+        });
+
+      }
+    });
+
+
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NinjaCard()));
 
   }
+
+int daysBetween(DateTime from, DateTime to) {
+  from = DateTime(
+      from.year, from.month, from.day, from.hour, from.minute, from.second);
+  to = DateTime(to.year, to.month, to.day, to.hour, to.minute, to.second);
+  return to.difference(from).inSeconds;
+}
 
   late String? uid;
   @override
