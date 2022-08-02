@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import 'package:turtle_ninja/models/clicked_button.dart';
 import 'package:turtle_ninja/models/lastUpdate.dart';
 import 'package:turtle_ninja/shared/loader.dart';
 import '../helpers/dialogHelper.dart';
 import '../models/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/mission.dart';
 import '../models/myuser.dart';
 import '../services/boxes.dart';
 import '../services/database.dart';
@@ -26,6 +28,8 @@ class _LoadingState extends State<Loading> {
 
 Map settings={};
   Future<void> setPreferences() async {
+
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? date = prefs.getString('update_date');
     date ??= DateTime.now().toUtc().toIso8601String();
@@ -119,10 +123,35 @@ Map settings={};
 
 
       //print("Settings :"+settings['characters']);
+      List<Mission> missionsList = Boxes.getMissions().values.toList().cast<Mission>();
+      DateTime currentTime = DateTime.now();
 
-      Navigator.pushReplacementNamed(context, '/home', arguments: settings);
+       missionsList.forEach((mission) async {
+        if(currentTime.isAfter(mission.endDate) && mission.city_id != 'DefaultLocation'){
+          await GetIt.I.get<DataBaseService>().missionEnd(
+              mission, Boxes.getCharacterData().get(mission.character_id)!);
+        }
+        else if(currentTime.isBefore(mission.endDate)){
+          Future.delayed(Duration(seconds: daysBetween(currentTime,mission.endDate)),() async {
+            await GetIt.I.get<DataBaseService>().missionEnd(
+                mission, Boxes.getCharacterData().get(mission.character_id)!);
+
+          });
+
+        }
+      });
+
+
+      Navigator.pushReplacementNamed(context, '/app', arguments: settings);
 
   }
+
+  int daysBetween(DateTime from, DateTime to) {
+  from = DateTime(
+      from.year, from.month, from.day, from.hour, from.minute, from.second);
+  to = DateTime(to.year, to.month, to.day, to.hour, to.minute, to.second);
+  return to.difference(from).inSeconds;
+}
 
   late String? uid;
   @override

@@ -7,10 +7,12 @@ import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:turtle_ninja/helpers/dialogHelper.dart';
+import 'package:turtle_ninja/models/clicked_button.dart';
 import 'package:turtle_ninja/models/mission.dart';
 import 'package:turtle_ninja/models/payload.dart';
 import 'package:turtle_ninja/pages/details/upperPage.dart';
 import 'package:turtle_ninja/sprites/turtleGame.dart';
+import 'package:turtle_ninja/stream/stream.dart';
 import '../../models/CharacterData.dart';
 import '../../services/boxes.dart';
 import '../../services/database.dart';
@@ -33,7 +35,7 @@ class _DetailsState extends State<Details> {
   ValueNotifier<bool> showAnimation = ValueNotifier(false);
   ValueNotifier<int> difference = ValueNotifier(0);
   late dynamic foundMission;
-  late Timer timer;
+  late Timer timer=Timer(Duration(seconds: 5), () { });
   late bool notFinished = false;
   late bool canBePressed = true;
   late CharacterData chData;
@@ -59,25 +61,34 @@ class _DetailsState extends State<Details> {
         difference.value = daysBetween(currentTime, foundMission.first.endDate);
         showAnimation.value=true;
         print(difference);
-        setState(() {
-          notFinished = true;
-        });
+        notFinished = true;
+        if(this.mounted) {
+          setState(() {
+
+          });
+        }
       } else {
-        if(cancelled==false && clickedOnButton==true) {
+
+        if(cancelled==false && foundMission.first.city_id != "DefaultLocation") {
 
             await GetIt.I.get<DataBaseService>().missionEnd(
                 foundMission.first, chData);
-            setState(() { clickedOnButton=false;});
 
         }
         if(cancelled == true){
-          setState(() {cancelled=false; });
+          cancelled=false;
+          if(this.mounted) {
+            setState(() {});
+          }
         }
-        setState(() {
-          notFinished = false;
-          difference.value = 0;
-          showAnimation.value=false;
-        });
+        notFinished = false;
+        difference.value = 0;
+        showAnimation.value=false;
+        if(this.mounted) {
+          setState(() {
+
+          });
+        }
         timer.cancel();
       }
     });
@@ -111,7 +122,10 @@ class _DetailsState extends State<Details> {
     dynamic missions = GetIt.I.get<DataBaseService>().getMissions();
     foundMission =
         missions.where((mission) => mission.character_id == chData.docID);
-    _startTimer();
+    timer.cancel();
+    if(!timer.isActive) {
+      _startTimer();
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _addWidgets();
     });
@@ -344,7 +358,7 @@ class _DetailsState extends State<Details> {
 
   @override
   void dispose() {
-    timer.cancel();
+   // timer.cancel();
     super.dispose();
   }
 
@@ -480,6 +494,9 @@ class _DetailsState extends State<Details> {
         if (!hasInternet) {
           DialogHelper.noInternet(context);
         } else {
+          Future.delayed(Duration(seconds: 20), (){
+            print("potato");
+          });
           setState(() {
             notFinished = true;
             slide = false;
@@ -489,6 +506,7 @@ class _DetailsState extends State<Details> {
           await GetIt.I
               .get<DataBaseService>()
               .setNewMissions(foundMission.first);
+
           if (!timer.isActive) {
             _startTimer();
             PayLoad payLoad = PayLoad(
@@ -499,6 +517,7 @@ class _DetailsState extends State<Details> {
                 "" + chData.name + " has completed his mission",
                 encodedPayload,
                 DateTime.now().add(Duration(seconds: 61)));
+
           }
         }
       };

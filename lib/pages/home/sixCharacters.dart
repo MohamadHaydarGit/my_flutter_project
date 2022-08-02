@@ -43,7 +43,7 @@ class _SixCharactersState extends State<SixCharacters> {
     var size = MediaQuery.of(context).size;
 
     /*24 is for notification bar on Android*/
-    final double itemHeight = ((size.height - kToolbarHeight - 24) / 3.6);
+    final double itemHeight = ((size.height - kToolbarHeight - 24) / 3.9);
     final double itemWidth = (size.width / 2);
     return Column(
       children: [
@@ -122,7 +122,7 @@ class _SixCharactersState extends State<SixCharacters> {
         tag: "img_${widget.characters[index].docID}",
 
         child: CircleAvatar(
-            radius: 230.0.r,
+            radius: 225.0.r,
             backgroundImage :AssetImage('assets/sewer2.jpg'),
 
             child: Opacity(

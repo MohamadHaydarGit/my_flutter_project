@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:turtle_ninja/models/CharacterData.dart';
 import 'package:turtle_ninja/models/city.dart';
+import 'package:turtle_ninja/models/clicked_button.dart';
 import 'package:turtle_ninja/models/lastUpdate.dart';
 import 'package:turtle_ninja/models/userLikes.dart';
 
@@ -21,5 +22,8 @@ class Boxes{
 
   static Box<UserLikes> getUserLikes() =>
       Hive.box<UserLikes>('userLikes');
+
+  static Box<ClickedButton> getClick() =>
+      Hive.box<ClickedButton>('clickedButton');
 
 }

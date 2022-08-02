@@ -1,14 +1,17 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:turtle_ninja/models/CharacterData.dart';
+import 'package:turtle_ninja/models/clicked_button.dart';
 import 'package:turtle_ninja/models/lastUpdate.dart';
 import 'package:turtle_ninja/models/userCredentials.dart';
 import 'package:turtle_ninja/models/userLikes.dart';
+import 'package:turtle_ninja/pages/app.dart';
 import 'package:turtle_ninja/pages/details/details.dart';
 import 'package:turtle_ninja/pages/map/map.dart';
 import 'package:turtle_ninja/pages/wrapper.dart';
@@ -69,6 +72,9 @@ void main() async {
   Hive.registerAdapter(UserLikesAdapter());
   await Hive.openBox<UserLikes>('userLikes');
 
+  Hive.registerAdapter(ClickedButtonAdapter());
+  await Hive.openBox<ClickedButton>('clickedButton');
+
   //check connectivity
   ConnectionStatusSingleton connectionStatus = ConnectionStatusSingleton.getInstance();
   connectionStatus.initialize();
@@ -90,8 +96,9 @@ void main() async {
           initialRoute: '/',
           routes: {
             '/':(context) => Wrapper(),
-            '/home':(context) => NinjaCard(),
-           // '/settings':(context) => Settings(),
+           // '/home':(context) => NinjaCard(),
+            '/app':(context) =>App(),
+            // '/settings':(context) => Settings(),
             '/details':(context) => Details(docID: '',),
            // '/details/map':(context) => MapScreen(),
 

@@ -1,38 +1,34 @@
-import 'dart:async';
 
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_it/get_it.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:turtle_ninja/models/CharacterData.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:turtle_ninja/services/firebaseDynamicLink.dart';
 import 'package:turtle_ninja/services/localNotificationService.dart';
-import '../../connection/connectionStatusSingleton.dart';
-import '../../models/enums.dart';
-import '../../models/myuser.dart';
+import '../../models/tab_item.dart';
 import '../../services/auth.dart';
 import '../../services/boxes.dart';
 import '../../services/database.dart';
-import '../../shared/loader.dart';
 import '../../shared/tmntLogo.dart';
 import '../settingsPage.dart';
+import 'bottomNavigation.dart';
 import 'character_pageview.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
 
 class NinjaCard extends StatefulWidget {
 
+  Map settings={};
+  NinjaCard({required this.settings});
+
   @override
-  State<NinjaCard> createState() => _NinjaCardState();
+  State<NinjaCard> createState() => NinjaCardState();
 }
 
-class _NinjaCardState extends State<NinjaCard> {
+class NinjaCardState extends State<NinjaCard> {
   final player = AudioPlayer();
-  Map settings = {};
+
 
   bool hasInternet = false;
 
@@ -88,12 +84,18 @@ class _NinjaCardState extends State<NinjaCard> {
   final DataBaseService databaseService = GetIt.I.get<DataBaseService>();
   final AuthService _auth = GetIt.I.get<AuthService>();
 
+  var _currentTab = TabItem.home;
+
+  void _selectTab(TabItem tabItem) {
+    setState(() => _currentTab = tabItem);
+  }
+
   @override
   Widget build(BuildContext context) {
 
-        Text(GetIt.I.get<DataBaseService>().uid);
-      settings = settings.isNotEmpty ? settings : ModalRoute.of(context)!.settings.arguments as Map;
-      player.setVolume(settings['selectedVolume']);
+
+
+      player.setVolume(widget.settings['selectedVolume']);
 
 
       // return StreamProvider<List<CharacterData>?>.value(
@@ -114,7 +116,7 @@ class _NinjaCardState extends State<NinjaCard> {
                 await preferences.clear();
                 player.stop();
                 await _auth.signOut();
-                Navigator.pushReplacementNamed(context,'/');
+                Navigator.of(context,rootNavigator: true).pushReplacementNamed('/');
 
               },
               icon: Icon(
@@ -132,15 +134,15 @@ class _NinjaCardState extends State<NinjaCard> {
               TextButton.icon(
                 onPressed: () async {
                   dynamic result = await Navigator.push(context, PageTransition(
-                      child: Settings(data: settings,player:player),
+                      child: Settings(data: widget.settings,player:player),
                       type: PageTransitionType.rightToLeft,
                       childCurrent:widget,
-                      duration: Duration(milliseconds: 600),
-                      reverseDuration: Duration(milliseconds: 600),
+                      duration: Duration(milliseconds: 300),
+                      reverseDuration: Duration(milliseconds: 300),
 
                   ));
                   setState(() {
-                    settings = {
+                    widget.settings = {
                       'selectedOption': result['selectedOption'],
                       'selectedShape': result['selectedShape'],
                       'selectedVolume': result['selectedVolume'],
@@ -163,11 +165,14 @@ class _NinjaCardState extends State<NinjaCard> {
             backgroundColor: Colors.green[800],
             elevation: 0.0.h,
           ),
-          body: CharacterList(settings),
+          body:CharacterList(widget.settings),
+
+
 
         );
 
     }
+
 
   }
 

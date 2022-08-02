@@ -13,6 +13,7 @@ import 'package:turtle_ninja/models/myuser.dart';
 import 'package:turtle_ninja/models/userLikes.dart';
 import 'package:turtle_ninja/services/localNotificationService.dart';
 import '../dialogs/loaderDialog.dart';
+import '../models/clicked_button.dart';
 import '../shared/dialog.dart';
 import 'boxes.dart';
 import '../models/city.dart';
@@ -83,6 +84,9 @@ class DataBaseService {
         'cancelledMissions': 0,
       });
 
+
+
+
     });
 
     /// NEW
@@ -152,20 +156,20 @@ class DataBaseService {
       'details': chData.details,
 
     }).then((value){
+
       chData.save();
     });
 
     await missionsCollection.doc(mission.missionId).update({
       'endDate': Timestamp.fromDate(DateTime.now()),
+      'locationId':"DefaultLocation",
       'cancelledMissions': mission.cancelledMissions+1,
     }).then((result){
       FlutterLocalNotificationsPlugin().cancelAll();
       mission.cancelledMissions=mission.cancelledMissions+1;
       mission.endDate=DateTime.now();
+      mission.city_id="DefaultLocation";
       mission.save();
-
-
-
     }).catchError((e){
       // Navigator.of(context).pop();
 

@@ -17,5 +17,6 @@ class Mission extends HiveObject  {
   @HiveField(5)
   late int cancelledMissions;
 
-  Mission({required this.city_id, required this.character_id, required this.missionId, required this.endDate, required this.successfulMissions, required this.cancelledMissions});
+
+  Mission({required this.city_id, required this.character_id, required this.missionId, required this.endDate, required this.successfulMissions, required this.cancelledMissions,});
 }

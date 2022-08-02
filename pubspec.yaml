@@ -79,6 +79,7 @@ dependencies:
   flutter_shake_animated: ^0.0.5
   flame: ^1.2.1
   like_button: ^2.0.4
+  flutter_easyloading: ^3.0.5
 
 
 
